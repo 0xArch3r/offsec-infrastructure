@@ -42,7 +42,7 @@ resource "aws_instance" "secondary_salt" {
   ami             = data.aws_ami.ubuntu_minion[count.index].id
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.ssh_group.name]
-  key_name        = "primary-c2-key"
+  key_name        = "aalmaguer-rsa"
 
 
   tags = {
