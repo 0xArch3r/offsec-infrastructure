@@ -1,6 +1,6 @@
 # Configure the AWS Provider
 provider "aws" {
-  region = "us-east-2"
+  region = "us-east-1"
 }
 
 data "aws_ami" "ubuntu_master" {
@@ -81,7 +81,76 @@ resource "aws_instance" "Primary_Phish" {
   ami             = data.aws_ami.ubuntu_master.id
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.phishing_group.name]
-  key_name        = "aalmaguer-01"
+  key_name        = "almaguer-01"
+
+  provisioner "remote-exec" {
+    script        = "install_gophish.sh"
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/almaguer-01.pem")
+      host        = self.public_ip
+    }
+  }
+
+  provisioner "file" {
+    source      = "config.json"
+    destination = "/home/ubuntu/go/src/github.com/gophish/gophish/config.json"
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/almaguer-01.pem")
+      host        = self.public_ip
+    }
+  }
+
+  provisioner "file" {
+    source      = "run_gophish.sh"
+    destination = "/home/ubuntu/run_gophish.sh"
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/almaguer-01.pem")
+      host        = self.public_ip
+    }
+  }
+
+  provisioner "remote-exec" {
+    inline = ["chmod +x /home/ubuntu/run_gophish.sh"]
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/almaguer-01.pem")
+      host        = self.public_ip
+    }
+  }
+
+  provisioner "file" {
+    source      = "gophish.service"
+    destination = "/home/ubuntu/gophish.service"
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/almaguer-01.pem")
+      host        = self.public_ip
+    }
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mv /home/ubuntu/gophish.service /etc/systemd/system/gophish.service",
+      "sudo ls -la /etc/systemd/system/gophish.service",
+      "sudo systemctl start gophish",
+      "sleep 3",
+      "cat /var/log/gophish.err | grep -Eo \"password \\w+\""
+      ]
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/almaguer-01.pem")
+      host        = self.public_ip
+    }
+  }
 
   tags = {
     Name = "Primary_Phish"

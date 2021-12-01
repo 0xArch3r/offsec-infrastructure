@@ -1,0 +1,14 @@
+[Unit]
+Description=Gophish service
+After=network-online.target
+
+[Service]
+Environment="GOPHISH_BIN_PATH=/home/ubuntu/go/src/github.com/gophish/gophish/"
+Environment="GOPHISH_LOG_PATH=/var/log/"
+User=root
+ExecStart=/bin/bash /home/ubuntu/run_gophish.sh
+RestartSec=1
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
