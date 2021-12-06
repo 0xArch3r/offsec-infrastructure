@@ -6,19 +6,19 @@ done
 
 # Update Ubuntu System
 echo "[+] Started Apt Update"
-sudo apt update > /dev/null
+sudo apt update &> /dev/null
 echo "[+] Started Apt Upgrade"
-sudo apt upgrade -y > /dev/null
+sudo apt upgrade -y &> /dev/null
 
 # Install GoLang
 echo "[+] Starting Go Lang Install"
-sudo apt install golang -y > /dev/null
+sudo apt install golang net-tools -y &> /dev/null
 
 # Install Go Phish Software
 echo "[+] Installing GoPhish"
-go get github.com/gophish/gophish
+go get github.com/gophish/gophish &> /dev/null
 cd go/src/github.com/gophish/gophish
 
-go build
+go build &> /dev/null
 
 

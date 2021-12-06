@@ -83,57 +83,34 @@ resource "aws_instance" "Primary_Phish" {
   security_groups = [aws_security_group.phishing_group.name]
   key_name        = "almaguer-01"
 
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = file("~/.ssh/almaguer-01.pem")
+    host        = self.public_ip
+  }
+
   provisioner "remote-exec" {
     script        = "install_gophish.sh"
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = file("~/.ssh/almaguer-01.pem")
-      host        = self.public_ip
-    }
   }
 
   provisioner "file" {
     source      = "config.json"
     destination = "/home/ubuntu/go/src/github.com/gophish/gophish/config.json"
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = file("~/.ssh/almaguer-01.pem")
-      host        = self.public_ip
-    }
   }
 
   provisioner "file" {
     source      = "run_gophish.sh"
     destination = "/home/ubuntu/run_gophish.sh"
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = file("~/.ssh/almaguer-01.pem")
-      host        = self.public_ip
-    }
   }
 
   provisioner "remote-exec" {
     inline = ["chmod +x /home/ubuntu/run_gophish.sh"]
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = file("~/.ssh/almaguer-01.pem")
-      host        = self.public_ip
-    }
   }
 
   provisioner "file" {
     source      = "gophish.service"
     destination = "/home/ubuntu/gophish.service"
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = file("~/.ssh/almaguer-01.pem")
-      host        = self.public_ip
-    }
   }
 
   provisioner "remote-exec" {
@@ -142,14 +119,13 @@ resource "aws_instance" "Primary_Phish" {
       "sudo ls -la /etc/systemd/system/gophish.service",
       "sudo systemctl start gophish",
       "sleep 3",
+      "echo '[+] Gophish Password: '",
       "cat /var/log/gophish.err | grep -Eo \"password \\w+\""
       ]
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = file("~/.ssh/almaguer-01.pem")
-      host        = self.public_ip
-    }
+  }
+
+  provisioner "remote-exec" {
+    script = "install_evilginx2.sh"
   }
 
   tags = {
