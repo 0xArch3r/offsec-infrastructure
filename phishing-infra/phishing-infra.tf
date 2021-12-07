@@ -61,6 +61,14 @@ resource "aws_security_group" "phishing_group" {
     cidr_blocks = [var.home_net]
   }
 
+  #GoPhish Landing Page
+  ingress {
+    from_port   = 8081
+    to_port     = 8081
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   # ssh for remote access, might want to lock down to your IP prior to rolling out
   ingress {
     from_port   = 22
@@ -79,7 +87,7 @@ resource "aws_security_group" "phishing_group" {
 
 resource "aws_instance" "Primary_Phish" {
   ami             = data.aws_ami.ubuntu_master.id
-  instance_type   = "t2.micro"
+  instance_type   = t2.micro""
   security_groups = [aws_security_group.phishing_group.name]
   key_name        = "almaguer-01"
 
