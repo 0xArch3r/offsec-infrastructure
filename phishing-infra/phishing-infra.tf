@@ -87,7 +87,7 @@ resource "aws_security_group" "phishing_group" {
 
 resource "aws_instance" "Primary_Phish" {
   ami             = data.aws_ami.ubuntu_master.id
-  instance_type   = t2.micro""
+  instance_type   = "t2.micro"
   security_groups = [aws_security_group.phishing_group.name]
   key_name        = "almaguer-01"
 
