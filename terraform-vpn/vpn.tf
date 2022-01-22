@@ -24,7 +24,7 @@ data "aws_ami" "ubuntu" {
 
 variable "access_addr" {
     type    = string
-    default = "104.51.210.204/32"
+    default = "0.0.0.0/0"
 
 }
 
