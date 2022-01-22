@@ -23,7 +23,7 @@ data "aws_ami" "ubuntu_master" {
 
 variable "home_net" {
     type    = string
-    default = "104.51.210.204/32"
+    default = "0.0.0.0/0"
 
 }
 
